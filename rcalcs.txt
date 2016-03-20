@@ -1,0 +1,242 @@
+(float) rdist(float a,float b)//arithmetical 2D distance approximation x,y
+{
+float dist;
+abs =a*sign(a);
+bbs = b*sign(b);
+if(abs>bbs){ 
+if(bbs<abs/10.) {dist=abs;}else{
+dist= abs+bbs/4.;
+
+
+}
+}else{
+
+
+if(abs<bbs/10.) {dist=bbs;}else{
+if(bbs>abs){ dist=bbs+abs/4.;}else{
+
+//if(bbs==abs) 
+dist=abs*1.3;
+}
+}
+}
+
+return dist;
+}
+
+(float)rSin(float theta)//nearest sin value in half a sin table
+{
+//sinTable[]. With half a sin wave innit
+//sinTableSize. Must be float!
+Int index= int(mod(theta/PI,1.0)*sinTableSize);
+Int whatev = floor(mod(theta/PI,2.0));
+Float negativize = (float) whatev * -2.0 +1.;
+
+Return sinTable[index]*negativize;// interpolate maybe?
+
+}
+
+
+//      rough Angle processing style calibrated to “atan2” range -PI,PI
+//   not sure if saves cycles much.
+
+
+float rangl(float a, float b) {  // x,y rangle (float float) rough angle in rads a.la. atan2
+
+  float dist =0.0;
+  float angley=PI;
+  float aas =  abs(a);  //a*sign(a);
+  float bbs = abs(b);	// b*sign(b);
+
+  float octrant = 0.0;
+ 
+
+  if (aas>bbs) {
+	bbs/=aas;
+	aas = 1.;
+
+	if (bbs<aas/8.) {
+  	angley=((bbs/(aas)));
+	}
+	else {
+
+  	float rongly = (aas*(bbs/2.)+bbs*(aas/2.));
+  	angley = (rongly/2.)*(1.0+rongly)/(0.3+rongly);
+  	dist= aas+bbs/2.5;
+	}
+  }
+  else {
+
+	aas/=bbs;
+	bbs = 1.;
+
+	if (aas<bbs/8.) {
+   	angley = (aas/bbs);
+  	//angley =100.0;
+
+  	dist=bbs;
+	}
+	else {
+
+  	if (bbs>aas) {
+    	dist=bbs+aas/2.5;
+    	//angley=-1000;
+    	float rongly = (aas*(bbs/2.)+bbs*(aas/2.));
+    	angley = (rongly/2.)*(1.0+rongly)/(0.3+rongly);
+  	}
+  	else {
+    	angley = PI/4.;
+    	//if(bbs==aas)
+
+    	dist=aas*1.414;
+  	}
+	}
+  }
+ 
+   if (a>0.) {
+	if (b>0.) {
+  	if (b>a) {
+    	octrant=1.571-angley;
+  	}
+  	else {
+    	octrant=angley;
+  	}
+	}
+	else {
+  	if (bbs>aas) {
+    	octrant=-(1.57-angley);
+  	}
+  	else {
+    	octrant=-angley;
+  	}
+	}
+  }
+  else {
+   	if (b>0.) {
+  	if (bbs>aas) {
+    	octrant=1.571+angley;
+ 	//   octrant=100;
+  	}
+  	else {
+   //         	octrant=1.571+1.57-angley;
+ //  octrant=100;
+    	octrant=PI-angley;
+  	}
+	}
+	else {
+  	if (bbs>aas) {
+    	octrant=-(1.57+angley);
+  	}
+  	else {
+    	octrant=-(PI-( angley));
+  	}
+	}
+    
+  }
+
+
+  return octrant;
+} // rangle (float float) rough angle in rads a.la. atan2
+
+float rrangl(float a, float b){ // sooper rough but surprisingly accurate x,y
+  if(a==0. || b==0.){
+	return 0.;// at least do quadrants u lazy b
+  }
+ 
+	float dist =0.0;
+  float angley=PI;
+  float aas =  abs(a);  //a*sign(a);
+  float bbs = abs(b);	// b*sign(b);
+  float octrant=PI;
+  if (aas>bbs) {
+	bbs/=aas;
+	aas = 1.;
+
+	if (bbs<aas/8.) {
+  	angley=((bbs/(aas)));
+	}
+	else {
+
+  	dist= aas+bbs/2.5;
+  	angley = bbs*PI/4.;
+	}
+  }
+  else {
+
+	aas/=bbs;
+	bbs = 1.;
+
+	if (aas<bbs/8.) {
+   	angley = (aas/bbs);
+
+  	dist=bbs;
+	}
+	else {
+
+  	if (bbs>aas) {
+    	dist=bbs+aas/2.5;
+  	angley = aas*PI/4.;
+
+  	}
+  	else {
+    	angley = PI/4.;
+
+    	dist=aas*1.414;
+  	}
+	}
+  }
+ 
+   if (a>0.) {
+	if (b>0.) {
+  	if (b>a) {
+    	octrant=1.571-angley;
+
+  	}
+  	else {
+    	octrant=angley;
+  	}
+	}
+	else {
+  	if (bbs>aas) {
+    	octrant=-(1.57-angley);
+   	 
+  	}
+  	else {
+    	octrant=-angley;
+  	}
+	}
+  }
+  else {
+   	if (b>0.) {
+  	if (bbs>aas) {
+    	octrant=1.571+angley;
+
+  	}
+  	else {
+    	octrant=PI-angley;
+
+  	}
+	}
+	else {
+  	if (bbs>aas) {
+    	octrant=-(1.57+angley);
+  	}
+  	else {
+    	octrant=-(PI-( angley));
+
+  	}
+	}
+    
+  }
+
+
+  return octrant;
+ 
+ 
+}//  RRANGL(float, float) // rough angle from 0,0 in rads  x,y   could do rough distance too
+
+
+
+
+
+
